@@ -1,9 +1,17 @@
 from fastapi import FastAPI
 
+from app.api.auth_routes import router as auth_router
+
+from app.db.init_db import init_db
+
 app = FastAPI(
     title="AI Automation System",
     version="1.0.0"
 )
+
+init_db()
+
+app.include_router(auth_router)
 
 @app.get("/")
 def root():

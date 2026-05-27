@@ -1,12 +1,15 @@
-from backend.app.db.database import engine
+# from backend.app.db.database import engine
 
-try:
-    connection = engine.connect()
+# try:
+#     connection = engine.connect()
 
-    print("Database connected successfully!")
+#     print("Database connected successfully!")
 
-    connection.close()
+#     connection.close()
 
-except Exception as e:
-    print("Database connection failed")
-    print(e)
+# except Exception as e:
+#     print("Database connection failed")
+#     print(e)
+
+import secrets
+print(secrets.token_hex(32))
