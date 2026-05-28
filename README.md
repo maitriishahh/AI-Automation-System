@@ -9,15 +9,21 @@ The platform enables businesses to automate workflows, execute integrations, mon
 # Demo Video
 
 ## Demo Video Link
+[Demo Video](https://drive.google.com/file/d/1dxQWKr1tctDY9B4OaHfHSVT2FwO7z0Vu/view?usp=drive_link)
 
-Add your demo video here:
+Telegram Bot Integration
+<p align="center">
 
-```txt id="j9c8lg"
-https://your-demo-video-link
-```
+  <img 
+    src="https://github.com/user-attachments/assets/b1e8a796-c1ca-482e-9f11-0019475cf232"
+    width="150"
+    height="300"
+  />
+
+</p>
 
 Recommended demo flow:
-
+```
 Login
 ↓
 Dashboard Overview
@@ -33,7 +39,7 @@ Workflow Logs
 Integrations
 ↓
 Leads CRM
-
+```
 ---
 
 # Features
