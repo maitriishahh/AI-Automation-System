@@ -49,8 +49,16 @@ function Dashboard() {
         <div>
 
           <h1 className="text-4xl font-bold">
-            Dashboard
-          </h1>
+
+  {
+    localStorage
+      .getItem("workspace_email")
+      ?.split("@")[0]
+  }
+
+  {" "}Workspace Dashboard
+
+</h1>
 
           <p className="text-gray-500 mt-1">
             Workflow orchestration overview

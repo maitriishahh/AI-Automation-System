@@ -1,8 +1,14 @@
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useLocation
+} from "react-router-dom";
 
 function Sidebar() {
 
   const navigate = useNavigate();
+
+  const location = useLocation();
 
   const handleLogout = () => {
 
@@ -11,6 +17,17 @@ function Sidebar() {
     localStorage.removeItem("workspace_email");
 
     navigate("/login");
+  };
+
+  // ACTIVE LINK STYLE
+
+  const activeClass = (path) => {
+
+    return location.pathname === path
+
+      ? "font-bold text-blue-400"
+
+      : "text-white";
   };
 
   return (
@@ -31,45 +48,46 @@ function Sidebar() {
 
           <Link
             to="/"
-            className="hover:text-blue-400 transition"
+            className={`${activeClass("/")} hover:text-blue-400 transition`}
           >
             Dashboard
           </Link>
 
           <Link
             to="/create-workflow"
-            className="hover:text-blue-400 transition"
+            className={`${activeClass("/create-workflow")} hover:text-blue-400 transition`}
           >
             Create Workflow
           </Link>
 
           <Link
             to="/workflows"
-            className="hover:text-blue-400 transition"
+            className={`${activeClass("/workflows")} hover:text-blue-400 transition`}
           >
             Workflows
           </Link>
 
           <Link
             to="/logs"
-            className="hover:text-blue-400 transition"
+            className={`${activeClass("/logs")} hover:text-blue-400 transition`}
           >
             Logs
           </Link>
 
           <Link
             to="/integrations"
-            className="hover:text-blue-400 transition"
+            className={`${activeClass("/integrations")} hover:text-blue-400 transition`}
           >
             Integrations
           </Link>
-          
-            <Link
+
+          <Link
             to="/leads"
-            className="hover:text-blue-400 transition"
-            >
+            className={`${activeClass("/leads")} hover:text-blue-400 transition`}
+          >
             Leads CRM
-            </Link>
+          </Link>
+
         </div>
 
       </div>
@@ -80,7 +98,9 @@ function Sidebar() {
 
         <p className="mb-4 text-sm text-gray-400">
           {
-            localStorage.getItem("workspace_email")
+            localStorage.getItem(
+              "workspace_email"
+            )
           }
         </p>
 
