@@ -1,3 +1,5 @@
+import asyncio
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.api.auth_routes import router as auth_router
@@ -7,12 +9,28 @@ from app.api.webhook_routes import router as webhook_router
 
 from app.db.init_db import init_db
 
+from app.queue.worker import start_worker
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+
+    init_db()
+
+    asyncio.create_task(
+        start_worker()
+    )
+
+    print("Background worker started...")
+
+    yield
+
+    print("Application shutting down...")
+
 app = FastAPI(
     title="AI Automation System",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
-
-init_db()
 
 app.include_router(auth_router)
 app.include_router(workflow_router)

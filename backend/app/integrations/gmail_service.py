@@ -15,7 +15,8 @@ async def send_email(payload: dict):
 
     try:
 
-        recipient = payload.get("email")
+        recipient = (payload.get("to_email") or
+         payload.get("email"))
         subject = payload.get(
             "subject",
             "Workflow Notification"

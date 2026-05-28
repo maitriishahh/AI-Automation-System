@@ -21,6 +21,10 @@ from app.auth.dependencies import get_current_user
 
 from app.models.user_model import User
 
+from app.queue.queue_manager import (
+    add_to_queue
+)
+
 router = APIRouter(
     prefix="/workflows",
     tags=["Workflows"]
@@ -31,20 +35,30 @@ router = APIRouter(
 async def execute_workflow(
     template_name: str,
     payload: dict,
-    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
 
     try:
 
-        result = await WorkflowService.execute_template_workflow(
-            db=db,
-            template_name=template_name,
-            payload=payload,
-            workspace_id=current_user.workspace_id
-        )
+        add_to_queue({
 
-        return result
+            "type": "template",
+
+            "template_name": template_name,
+
+            "payload": payload,
+
+            "workspace_id": current_user.workspace_id
+        })
+
+        return {
+
+            "message": "Workflow added to queue",
+
+            "template_name": template_name,
+
+            "status": "PENDING"
+        }
 
     except Exception as e:
 
@@ -83,20 +97,30 @@ def create_workflow(
 async def execute_db_workflow(
     workflow_id: int,
     payload: dict,
-    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
 
     try:
 
-        result = await WorkflowService.execute_db_workflow(
-            db=db,
-            workflow_id=workflow_id,
-            payload=payload,
-            workspace_id=current_user.workspace_id
-        )
+        add_to_queue({
 
-        return result
+            "type": "database",
+
+            "workflow_id": workflow_id,
+
+            "payload": payload,
+
+            "workspace_id": current_user.workspace_id
+        })
+
+        return {
+
+            "message": "Workflow added to queue",
+
+            "workflow_id": workflow_id,
+
+            "status": "PENDING"
+        }
 
     except Exception as e:
 
@@ -104,6 +128,7 @@ async def execute_db_workflow(
             status_code=400,
             detail=str(e)
         )
+
 
 
 @router.get(
@@ -135,6 +160,7 @@ def get_workflows(
     )
 
     return workflows
+
 
 
 @router.get(
@@ -170,7 +196,10 @@ def toggle_workflow(
     )
 
     return {
+
         "message": "Workflow status updated",
+
         "workflow_id": workflow.id,
+
         "is_active": workflow.is_active
     }
