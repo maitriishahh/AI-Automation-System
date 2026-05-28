@@ -2,8 +2,8 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
-    ForeignKey,
-    DateTime
+    DateTime,
+    JSON
 )
 
 from sqlalchemy.sql import func
@@ -17,14 +17,11 @@ class WorkflowRun(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    workflow_id = Column(
-        Integer,
-        ForeignKey("workflows.id")
-    )
+    workflow_name = Column(String, nullable=False)
 
-    status = Column(String)
+    status = Column(String, nullable=False)
 
-    retry_count = Column(Integer, default=0)
+    workspace_id = Column(Integer)
 
     started_at = Column(
         DateTime(timezone=True),
@@ -33,5 +30,15 @@ class WorkflowRun(Base):
 
     finished_at = Column(
         DateTime(timezone=True),
+        nullable=True
+    )
+
+    execution_results = Column(
+        JSON,
+        nullable=True
+    )
+
+    error_message = Column(
+        String,
         nullable=True
     )

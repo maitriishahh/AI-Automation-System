@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.auth_routes import router as auth_router
+from app.api.workflow_routes import router as workflow_router
 
 from app.db.init_db import init_db
 
@@ -12,6 +13,7 @@ app = FastAPI(
 init_db()
 
 app.include_router(auth_router)
+app.include_router(workflow_router)
 
 @app.get("/")
 def root():
