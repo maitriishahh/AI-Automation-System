@@ -1,13 +1,15 @@
 import { useState } from "react";
-import API from "../services/api";
 
 function CreateWorkflow() {
 
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    workflow_json: ""
+    workflow_type: "gmail",
+    recipient_email: ""
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
 
@@ -23,6 +25,12 @@ function CreateWorkflow() {
 
     try {
 
+      setLoading(true);
+
+      const token = localStorage.getItem("token");
+
+      // BACKEND PAYLOAD
+
       const payload = {
 
         name: formData.name,
@@ -30,128 +38,204 @@ function CreateWorkflow() {
         description: formData.description,
 
         workflow_json: {
-          workflow_type: formData.workflow_json
-        }
+
+  nodes: [
+
+  // TRIGGER NODE
+
+  {
+    id: 1,
+
+    type: "trigger",
+
+    service: "gmail"
+  },
+
+  // ACTION NODE
+
+  {
+    id: 2,
+
+    type: "action",
+
+    service: "gmail",
+
+    config: {
+
+      recipient_email:
+        formData.recipient_email
+    }
+  }
+
+]
+}
       };
 
-      await API.post(
-        "/workflows/",
-        payload
+      console.log(payload);
+
+      const response = await fetch(
+        "http://127.0.0.1:8000/workflows/",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+
+            Authorization: `Bearer ${token}`
+          },
+
+          body: JSON.stringify(payload)
+        }
       );
 
+      const data = await response.json();
+
+      console.log(data);
+      if (!response.ok) {
+
+        alert(data.detail || "Workflow creation failed");
+
+        return;
+      }
+
       alert("Workflow created successfully");
+
+      // RESET FORM
 
       setFormData({
         name: "",
         description: "",
-        workflow_json: ""
+        workflow_type: "email_automation",
+        recipient_email: ""
       });
 
     } catch (error) {
 
-      console.log(error);
+      console.error(error);
 
-      alert("Failed to create workflow");
+      alert("Server error");
+
+    } finally {
+
+      setLoading(false);
     }
   };
 
   return (
 
-    <div className="p-6">
+    <div className="p-8">
 
-      <h1 className="text-3xl font-bold mb-6">
-        Create Workflow
-      </h1>
+      <div className="max-w-2xl bg-white shadow-xl rounded-2xl p-8">
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-xl shadow p-6 max-w-2xl"
-      >
+        <h1 className="text-3xl font-bold mb-6">
+          Create Workflow
+        </h1>
 
-        {/* Name */}
+        <form onSubmit={handleSubmit}>
 
-        <div className="mb-4">
+  {/* WORKFLOW TYPE */}
 
-          <label className="block mb-2 font-medium">
-            Workflow Name
-          </label>
+  <div className="mb-4">
 
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full border rounded p-3"
-            placeholder="Lead Capture Workflow"
-            required
-          />
+    <label className="block mb-2 font-medium">
+      Workflow Type
+    </label>
 
-        </div>
+    <select
+      name="workflow_type"
+      value={formData.workflow_type}
+      onChange={handleChange}
+      className="w-full border rounded p-3"
+    >
 
-        {/* Description */}
+      <option value="gmail">
+        Email Automation
+      </option>
 
-        <div className="mb-4">
+      <option value="telegram">
+        Telegram Automation
+      </option>
 
-          <label className="block mb-2 font-medium">
-            Description
-          </label>
+    </select>
 
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full border rounded p-3"
-            placeholder="Workflow description"
-          />
+  </div>
 
-        </div>
+  {/* WORKFLOW NAME */}
 
-        {/* Workflow Type */}
+  <div className="mb-4">
 
-        <div className="mb-6">
+    <label className="block mb-2 font-medium">
+      Workflow Name
+    </label>
 
-          <label className="block mb-2 font-medium">
-            Workflow Type
-          </label>
+    <input
+      type="text"
+      name="name"
+      value={formData.name}
+      onChange={handleChange}
+      className="w-full border rounded p-3"
+      placeholder="Gmail Automation"
+      required
+    />
 
-          <select
-            name="workflow_json"
-            value={formData.workflow_json}
-            onChange={handleChange}
-            className="w-full border rounded p-3"
-            required
-          >
+  </div>
 
-            <option value="">
-              Select Workflow
-            </option>
+  {/* DESCRIPTION */}
 
-            <option value="lead_capture">
-              Lead Capture
-            </option>
+  <div className="mb-4">
 
-            <option value="email_automation">
-              Email Automation
-            </option>
+    <label className="block mb-2 font-medium">
+      Description
+    </label>
 
-            <option value="notification_workflow">
-              Notification Workflow
-            </option>
+    <textarea
+      name="description"
+      value={formData.description}
+      onChange={handleChange}
+      className="w-full border rounded p-3"
+      placeholder="Workflow description"
+      rows="4"
+    />
 
-          </select>
+  </div>
 
-        </div>
+  {/* RECIPIENT EMAIL */}
 
-        {/* Submit */}
+  <div className="mb-6">
 
-        <button
-          type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded transition"
-        >
-          Save Workflow
-        </button>
+    <label className="block mb-2 font-medium">
+      Recipient Email
+    </label>
 
-      </form>
+    <input
+      type="email"
+      name="recipient_email"
+      value={formData.recipient_email}
+      onChange={handleChange}
+      className="w-full border rounded p-3"
+      placeholder="client@gmail.com"
+      required
+    />
+
+  </div>
+
+  {/* BUTTON */}
+
+  <button
+    type="submit"
+    disabled={loading}
+    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded"
+  >
+    {
+      loading
+        ? "Creating..."
+        : "Create Workflow"
+    }
+  </button>
+
+</form>
+
+      </div>
 
     </div>
 
