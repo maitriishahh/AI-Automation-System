@@ -1,4 +1,6 @@
 test.py
+backend/app/api/test_router.py
+backend/google_credentials.json
 # ==========================================
 # PYTHON
 # ==========================================

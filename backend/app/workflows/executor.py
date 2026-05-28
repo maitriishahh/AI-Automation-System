@@ -23,7 +23,8 @@ class NodeExecutor:
 
             action_function = get_action(service_name)
 
-            result = await retry_handler(action_function,payload)
+            result = await retry_handler(action_function,
+            payload)
 
             return {
                 "status": "trigger_executed",
@@ -48,8 +49,9 @@ class NodeExecutor:
 
             action_function = get_action(service_name)
 
-            result = await action_function(payload)
-
+            result = await retry_handler(action_function,
+            payload) 
+            
             return {
                 "status": "action_executed",
                 "service": service_name,
