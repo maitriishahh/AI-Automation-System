@@ -1,13 +1,9 @@
-import asyncio
+from apscheduler.schedulers.background import (
+    BackgroundScheduler
+)
 
+scheduler = BackgroundScheduler()
 
-async def schedule_workflow(
-    workflow_func,
-    interval_seconds=60
-):
+scheduler.start()
 
-    while True:
-
-        await workflow_func()
-
-        await asyncio.sleep(interval_seconds)
+print("Scheduler started...")

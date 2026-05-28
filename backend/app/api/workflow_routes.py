@@ -22,7 +22,7 @@ from app.auth.dependencies import get_current_user
 from app.models.user_model import User
 
 from app.queue.queue_manager import (
-    add_to_queue
+    add_to_queue, get_queue_size
 )
 
 router = APIRouter(
@@ -202,4 +202,12 @@ def toggle_workflow(
         "workflow_id": workflow.id,
 
         "is_active": workflow.is_active
+    }
+
+@router.get("/queue/status")
+def queue_status():
+
+    return {
+
+        "pending_jobs": get_queue_size()
     }

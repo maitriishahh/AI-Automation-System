@@ -11,6 +11,8 @@ from app.db.init_db import init_db
 
 from app.queue.worker import start_worker
 
+import app.scheduler.scheduled_jobs
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 
