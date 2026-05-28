@@ -86,10 +86,13 @@ class WorkflowService:
         workspace_id: int
     ):
 
-        workflow = db.query(Workflow).filter(
-            Workflow.id == workflow_id,
-            Workflow.workspace_id == workspace_id
-        ).first()
+        query = db.query(Workflow).filter(Workflow.id==workflow_id)
+
+        if workspace_id is not None:
+            query = query.filter(
+                Workflow.workspace_id == workspace_id
+            )
+        workflow = query.first()
 
         if not workflow:
             raise Exception("Workflow not found")
